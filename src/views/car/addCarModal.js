@@ -7,7 +7,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import * as Yup from "yup";
 import useApi from "../../utils/hooks/useApi";
-import { useEffect, useState } from "react";
+import Loader from "../../components/@global/Loader";
+import { addToast } from "../../redux/toastReducer";
+import { useDispatch } from "react-redux";
 
 const AddCarSchema = Yup.object().shape({
   model: Yup.string().required("Model is required"),
@@ -19,17 +21,24 @@ const AddCarSchema = Yup.object().shape({
 
 export default function AddCarModal({ open, setOpen, fetchCars, categories }) {
   const { loading, error, get, post } = useApi();
+  const dispatch = useDispatch();
 
   const handleAddCar = async (data) => {
     try {
       await post("/vehicle", data);
       fetchCars();
       setOpen(false);
-    } catch (error) {}
+      dispatch(addToast({ message: "Added Successfully", type: "success" }));
+    } catch (error) {
+      dispatch(
+        addToast({ message: error.response.data.message, type: "error" })
+      );
+    }
   };
   return (
     <CustomModal open={open} setOpen={setOpen}>
       <CustomCard>
+        {loading && <Loader />}
         <h1 className="mb-5 text-5xl">Register Car</h1>
 
         <Formik

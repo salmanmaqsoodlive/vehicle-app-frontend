@@ -7,7 +7,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import * as Yup from "yup";
 import useApi from "../../utils/hooks/useApi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import Loader from "../../components/@global/Loader";
+import { addToast } from "../../redux/toastReducer";
 
 const AddCarSchema = Yup.object().shape({
   model: Yup.string().required("Model is required"),
@@ -25,6 +28,7 @@ export default function EditCarModal({
   categories,
 }) {
   const { loading, error, put } = useApi();
+  const dispatch = useDispatch();
   const [initialValues, setInitialValues] = useState({
     model: editCar.model,
     color: editCar.color,
@@ -33,22 +37,28 @@ export default function EditCarModal({
     categoryId: editCar.category?._id,
   });
 
-  const handleAddCar = async (data) => {
+  const handleEditCar = async (data) => {
     try {
       await put(`/vehicle/${editCar._id}`, data);
       fetchCars();
       setOpen(false);
-    } catch (error) {}
+      dispatch(addToast({ message: "Updated Successfully", type: "success" }));
+    } catch (error) {
+      dispatch(
+        addToast({ message: error.response.data.message, type: "error" })
+      );
+    }
   };
   return (
     <CustomModal open={open} setOpen={setOpen}>
       <CustomCard>
+        {loading && <Loader />}
         <h1 className="mb-5 text-5xl">Edit Car</h1>
 
         <Formik
           initialValues={initialValues}
           validationSchema={AddCarSchema}
-          onSubmit={handleAddCar}
+          onSubmit={handleEditCar}
         >
           {({ errors, touched }) => (
             <Form>

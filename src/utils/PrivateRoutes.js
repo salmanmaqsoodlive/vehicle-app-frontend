@@ -7,7 +7,8 @@ const PrivateRoutes = () => {
 
   return auth.user && auth.token ? (
     <div className="flex flex-col w-screen">
-      <Navbar /> <Outlet />
+      <Navbar />
+      <Outlet />
     </div>
   ) : (
     <Navigate to={"/login"} />

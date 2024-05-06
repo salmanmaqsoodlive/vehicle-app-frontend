@@ -9,6 +9,8 @@ import EditCarModal from "./editCarModal";
 import { setCategories } from "../../redux/categoryReducer";
 import ViewCarDetails from "./viewCarDetails";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/@global/Loader";
+import { addToast } from "../../redux/toastReducer";
 
 export default function CarListView() {
   const { loading, error, get, remove } = useApi();
@@ -40,8 +42,8 @@ export default function CarListView() {
       setData(res);
     } catch (error) {
       if (error?.response?.status === 401) {
-        navigate("/login");
         dispatch(logout());
+        navigate("/login");
       }
     }
   };
@@ -56,8 +58,13 @@ export default function CarListView() {
       await remove(`/vehicle/${id}`);
       const filteredData = data.filter((car) => car._id !== id);
       setData(filteredData);
+      dispatch(
+        addToast({ message: "Car deleted successfully", type: "success" })
+      );
     } catch (error) {
-      console.log(error);
+      dispatch(
+        addToast({ message: error.response.data.message, type: "error" })
+      );
     }
   };
   const handleViewDetails = (data) => {
@@ -131,6 +138,7 @@ export default function CarListView() {
 
   return (
     <div className="m-5">
+      {loading && <Loader />}
       <div className="flex justify-end mb-5">
         <CustomButton
           variant="contained"

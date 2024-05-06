@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import CustomDataTable from "../../components/@global/CustomDataTable";
 import useApi from "../../utils/hooks/useApi";
 import { logout } from "../../redux/authReducer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import CustomButton from "../../components/@global/CustomButton";
-import { setCategories } from "../../redux/categoryReducer";
 import { useNavigate } from "react-router-dom";
 import AddCategoryModal from "./addCategoryModal";
 import EditCategoryModal from "./editCategoryModal";
 import ViewCategoryDetails from "./viewCategoryDetails";
+import Loader from "../../components/@global/Loader";
+import { addToast } from "../../redux/toastReducer";
 
 export default function CategoryListView() {
   const { loading, error, get, remove } = useApi();
@@ -17,87 +18,54 @@ export default function CategoryListView() {
   const [open, setOpen] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openViewDetailsModal, setOpenViewDetailsModal] = useState(false);
-  const [selectedCar, setSelectedCar] = useState({});
-  const categories = useSelector((state) => state.categoryReducer.value);
+  const [selectedCategory, setSelectedCategory] = useState({});
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCars();
+    fetchCategories();
   }, []);
 
-  useEffect(() => {
-    fetchAllCategories();
-  }, []);
-
-  const fetchAllCategories = async () => {
-    const res = await get("/vehicleCategory");
-    dispatch(setCategories({ categories: res }));
-  };
-
-  const fetchCars = async () => {
+  const fetchCategories = async () => {
     try {
-      const res = await get("/vehicle");
+      const res = await get("/vehicleCategory");
       setData(res);
     } catch (error) {
       if (error?.response?.status === 401) {
-        navigate("/login");
         dispatch(logout());
+        navigate("/login");
       }
     }
   };
 
   const handleEdit = (car) => {
-    setSelectedCar(car);
+    setSelectedCategory(car);
     setOpenEditModal(true);
   };
 
   const handleDelete = async (id) => {
     try {
-      await remove(`/vehicle/${id}`);
+      await remove(`/vehicleCategory/${id}`);
       const filteredData = data.filter((car) => car._id !== id);
       setData(filteredData);
+      dispatch(
+        addToast({ message: "Deleted Successfully!!", type: "success" })
+      );
     } catch (error) {
-      console.log(error);
+      dispatch(
+        addToast({ message: error.response.data.message, type: "error" })
+      );
     }
   };
   const handleViewDetails = (data) => {
-    setSelectedCar(data);
+    setSelectedCategory(data);
     setOpenViewDetailsModal(true);
   };
 
   const columns = [
-    { field: "model", headerName: "Model", width: 300 },
-    { field: "make", headerName: "Make", width: 300 },
-    {
-      field: "color",
-      headerName: "Color",
-      width: 300,
-      renderCell: (params) => {
-        return (
-          <div
-            style={{
-              backgroundColor: params.row.color.toString(),
-              height: "20px",
-              width: "20px",
-            }}
-            className="rounded-full mt-2"
-          />
-        );
-      },
-    },
-    {
-      field: "category",
-      headerName: "Category",
-      width: 300,
-      renderCell: (params) => {
-        return <p>{params.row.category.type}</p>;
-      },
-    },
-    {
-      field: "registrationNumber",
-      headerName: "Registration",
-      width: 300,
-    },
+    { field: "type", headerName: "Type", width: 300 },
+    { field: "description", headerName: "Description", width: 300 },
+
     {
       field: "action",
       headerName: "Action",
@@ -131,6 +99,7 @@ export default function CategoryListView() {
 
   return (
     <div className="m-5">
+      {loading && <Loader />}
       <div className="flex justify-end mb-5">
         <CustomButton
           variant="contained"
@@ -138,7 +107,7 @@ export default function CategoryListView() {
             setOpen(true);
           }}
         >
-          Add Car
+          Add Category
         </CustomButton>
       </div>
       <CustomDataTable rows={data} columns={columns} />
@@ -147,24 +116,22 @@ export default function CategoryListView() {
         <AddCategoryModal
           open={open}
           setOpen={setOpen}
-          fetchCars={fetchCars}
-          categories={categories.categories}
+          fetchCategories={fetchCategories}
         />
       )}
       {openEditModal && (
         <EditCategoryModal
           open={openEditModal}
           setOpen={setOpenEditModal}
-          fetchCars={fetchCars}
-          editCar={selectedCar}
-          categories={categories.categories}
+          fetchCategories={fetchCategories}
+          editCategory={selectedCategory}
         />
       )}
       {openViewDetailsModal && (
         <ViewCategoryDetails
           open={openViewDetailsModal}
           setOpen={setOpenViewDetailsModal}
-          data={selectedCar}
+          data={selectedCategory}
         />
       )}
     </div>

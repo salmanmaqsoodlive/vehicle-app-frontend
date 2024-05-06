@@ -10,6 +10,8 @@ import useApi from "../../utils/hooks/useApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/authReducer";
 import { useNavigate } from "react-router-dom";
+import { addToast } from "../../redux/toastReducer";
+import Loader from "../../components/@global/Loader";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -29,16 +31,20 @@ export default function Login() {
   const handleLogin = async (data) => {
     try {
       const res = await post("/login", data);
+
       dispatch(setUser(res));
+      dispatch(addToast({ message: "Login Successfully", type: "success" }));
       navigate("/");
     } catch (error) {
-      console.log(error);
+      dispatch(
+        addToast({ message: error.response.data.message, type: "success" })
+      );
     }
   };
   return (
     <CustomCard>
       <h1 className="mb-5 text-5xl">Login</h1>
-
+      {loading && <Loader />}
       <Formik
         initialValues={{
           email: "",

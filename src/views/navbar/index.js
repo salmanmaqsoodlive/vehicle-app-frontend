@@ -11,13 +11,15 @@ export default function Navbar() {
     navigate("/login");
   };
   return (
-    <nav className="bg-blue-900 py-4 flex justify-evenly">
-      <Link to="/">
-        <div className="text-white">Car</div>
-      </Link>
-      <Link to="/category">
-        <div className="text-white">Category</div>
-      </Link>
+    <nav className="bg-blue-900 p-4 flex justify-between">
+      <div className="flex">
+        <Link to="/">
+          <div className="text-white mr-5">Car</div>
+        </Link>
+        <Link to="/category">
+          <div className="text-white">Category</div>
+        </Link>
+      </div>
       {/*  <Link to="/">
         <div className="text-white">Logout</div>
       </Link> */}

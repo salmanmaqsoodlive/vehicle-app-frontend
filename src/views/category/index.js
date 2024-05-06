@@ -1,4 +1,4 @@
-import CategoryListView from "./carListView";
+import CategoryListView from "./categoryListView";
 
 export default function Category() {
   return (
