@@ -25,7 +25,7 @@ const useApi = () => {
       url: `${BASE_URL}${url}`,
       headers,
       data:
-        data && method.toLowerCase() !== "delete" ? JSON.stringify(data) : null,
+        data && method.toLowerCase() !== "delete" ? JSON.stringify(data) : {},
     };
 
     try {

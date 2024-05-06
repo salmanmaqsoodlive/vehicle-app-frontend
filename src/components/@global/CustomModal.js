@@ -2,7 +2,6 @@ import * as React from "react";
 import Modal from "@mui/material/Modal";
 
 export default function CustomModal({ children, open, setOpen }) {
-  //   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
 
   return (

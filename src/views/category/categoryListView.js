@@ -4,13 +4,13 @@ import useApi from "../../utils/hooks/useApi";
 import { logout } from "../../redux/authReducer";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../components/@global/CustomButton";
-import AddCarModal from "./addCarModal";
-import EditCarModal from "./editCarModal";
 import { setCategories } from "../../redux/categoryReducer";
-import ViewCarDetails from "./viewCarDetails";
 import { useNavigate } from "react-router-dom";
+import AddCategoryModal from "./addCategoryModal";
+import EditCategoryModal from "./editCategoryModal";
+import ViewCategoryDetails from "./viewCategoryDetails";
 
-export default function CarListView() {
+export default function CategoryListView() {
   const { loading, error, get, remove } = useApi();
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
@@ -144,7 +144,7 @@ export default function CarListView() {
       <CustomDataTable rows={data} columns={columns} />
 
       {open && (
-        <AddCarModal
+        <AddCategoryModal
           open={open}
           setOpen={setOpen}
           fetchCars={fetchCars}
@@ -152,7 +152,7 @@ export default function CarListView() {
         />
       )}
       {openEditModal && (
-        <EditCarModal
+        <EditCategoryModal
           open={openEditModal}
           setOpen={setOpenEditModal}
           fetchCars={fetchCars}
@@ -161,7 +161,7 @@ export default function CarListView() {
         />
       )}
       {openViewDetailsModal && (
-        <ViewCarDetails
+        <ViewCategoryDetails
           open={openViewDetailsModal}
           setOpen={setOpenViewDetailsModal}
           data={selectedCar}

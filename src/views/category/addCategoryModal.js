@@ -17,7 +17,12 @@ const AddCarSchema = Yup.object().shape({
   categoryId: Yup.string().required("Please select category"),
 });
 
-export default function AddCarModal({ open, setOpen, fetchCars, categories }) {
+export default function AddCategoryModal({
+  open,
+  setOpen,
+  fetchCars,
+  categories,
+}) {
   const { loading, error, get, post } = useApi();
 
   const handleAddCar = async (data) => {

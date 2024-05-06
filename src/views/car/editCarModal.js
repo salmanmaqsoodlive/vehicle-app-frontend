@@ -17,12 +17,25 @@ const AddCarSchema = Yup.object().shape({
   categoryId: Yup.string().required("Please select category"),
 });
 
-export default function AddCarModal({ open, setOpen, fetchCars, categories }) {
-  const { loading, error, get, post } = useApi();
+export default function EditCarModal({
+  open,
+  setOpen,
+  fetchCars,
+  editCar,
+  categories,
+}) {
+  const { loading, error, put } = useApi();
+  const [initialValues, setInitialValues] = useState({
+    model: editCar.model,
+    color: editCar.color,
+    make: editCar.make,
+    registrationNumber: editCar.registrationNumber,
+    categoryId: editCar.category?._id,
+  });
 
   const handleAddCar = async (data) => {
     try {
-      await post("/vehicle", data);
+      await put(`/vehicle/${editCar._id}`, data);
       fetchCars();
       setOpen(false);
     } catch (error) {}
@@ -30,16 +43,10 @@ export default function AddCarModal({ open, setOpen, fetchCars, categories }) {
   return (
     <CustomModal open={open} setOpen={setOpen}>
       <CustomCard>
-        <h1 className="mb-5 text-5xl">Register Car</h1>
+        <h1 className="mb-5 text-5xl">Edit Car</h1>
 
         <Formik
-          initialValues={{
-            model: "",
-            color: "",
-            make: null,
-            registrationNumber: "",
-            category: "",
-          }}
+          initialValues={initialValues}
           validationSchema={AddCarSchema}
           onSubmit={handleAddCar}
         >
@@ -122,7 +129,7 @@ export default function AddCarModal({ open, setOpen, fetchCars, categories }) {
               </Field>
 
               <CustomButton type="submit" fullWidth variant="contained">
-                Add
+                Update
               </CustomButton>
             </Form>
           )}

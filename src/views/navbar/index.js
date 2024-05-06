@@ -13,7 +13,10 @@ export default function Navbar() {
   return (
     <nav className="bg-blue-900 py-4 flex justify-evenly">
       <Link to="/">
-        <div className="text-white">Home</div>
+        <div className="text-white">Car</div>
+      </Link>
+      <Link to="/category">
+        <div className="text-white">Category</div>
       </Link>
       {/*  <Link to="/">
         <div className="text-white">Logout</div>
